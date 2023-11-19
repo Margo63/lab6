@@ -1,6 +1,6 @@
 import {createRouter, createWebHashHistory} from 'vue-router'
-import Home from '../src/components/Home.vue'
 import Login from "@/components/Login.vue";
+import Admin from "@/components/Admin.vue";
 
 const routes = [
     {path: '/', name: 'Login', component: Login},
@@ -8,7 +8,7 @@ const routes = [
 // Создаст компонент, lazy-подгружаемый при первом обращении
         component: () => import('../src/components/About.vue')
     },
-    {path: '/home', name: 'Home', component: Home}
+    {path: '/admin', name: 'Admin', component: Admin}
 ]
 const router = createRouter({
     history: createWebHashHistory(),
