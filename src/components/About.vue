@@ -1,4 +1,4 @@
-<template>
+<template >
   <div>
     <!--    <div>params={{ $route.params }}</div>-->
     <!--    <div>query={{ $route.query }}</div>-->
@@ -20,23 +20,41 @@
 
     <h3>Stocks</h3>
 
+
+
     <div v-for="stock in stocks" v-bind:key="stock.id">
       <div v-if="listTrading.includes(stock.id)">
         {{ stock.name }}
         {{ stock.data[currentIndex].Open }}
         <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)">Buy</button>
         <button v-on:click="sellStock(stock.data[currentIndex].Open, stock.id)">Sell</button>
-        <button v-on:click="drawGraph(currentIndex)">Graph</button>
-        <v-dialog v-model="showDialog" width="500" height="500">
-          <v-card>
-            <Line
-                id="my-chart-id"
-                :options="chartOptions"
-                :data="chartData"
-            />
-          </v-card>
+        <button v-on:click="()=>{showDialog = stock.id}">Graph</button>
 
-        </v-dialog>
+        <dialog open v-if="showDialog === stock.id" width="1000px" height="1200px">
+          <Line
+              id="my-chart-id"
+              :options="{
+                responsive: true,
+                height:1000,
+                plugins: {
+                  title: {
+                    display: true,
+                    text: stock.id,
+                   },
+                 },
+              }"
+              :data="{
+                title:stock.id,
+                labels: stock.data.map((data) => data.Date).slice(currentIndex,startIndex).reverse(),
+                datasets: [{data: stock.data.map((data) =>
+                  data.Open.match(/(\d+)/)[0]).slice(currentIndex,startIndex).reverse()}]
+                }"
+
+          />
+          <button v-on:click="()=>{showDialog=''}">Close</button>
+        </dialog>
+
+
 
 
       </div>
@@ -69,8 +87,8 @@ export default {
   data() {
     return {
       // listTrading: [],
-      // date: null,
-      showDialog: false,
+      startIndex: 0,
+      showDialog: "",
       stocks: null,
       broker: null,
       chartOptionsBar: {
@@ -93,7 +111,8 @@ export default {
       },
       chartOptions: {
         responsive: true
-      }
+      },
+
     };
   },
   methods: {
@@ -115,7 +134,8 @@ export default {
             .then(response => (
                 console.log(response.data),
                     this.$store.commit("setBalance", parseFloat(this.balance - price.slice(1))),
-                    this.$store.commit("setUserStocks", JSON.parse(response.data.currentBroker).stocks)
+                    this.$store.commit("setUserStocks", JSON.parse(response.data.currentBroker).stocks),
+                    this.$store.commit("setBrokers", JSON.parse(response.data.brokers))
             ))
             .catch(error => {
               this.errorMessage = error.message;
@@ -143,7 +163,8 @@ export default {
             .then(response => (
                 console.log(response.data),
                     this.$store.commit("setBalance", parseFloat(this.balance + parseFloat(price.slice(1)))),
-                    this.$store.commit("setUserStocks", JSON.parse(response.data.currentBroker).stocks)
+                    this.$store.commit("setUserStocks", JSON.parse(response.data.currentBroker).stocks),
+                    this.$store.commit("setBrokers", JSON.parse(response.data.brokers))
             ))
             .catch(error => {
               this.errorMessage = error.message;
@@ -159,10 +180,6 @@ export default {
       }).indexOf(id);
       //console.log(curInd)
       return parseFloat(this.stocks[index].data[curInd].Open.slice(1))
-    },
-    drawGraph(curInd) {
-      console.log(curInd)
-      this.showDialog = true
     }
   },
   mounted() {
@@ -174,7 +191,8 @@ export default {
     this.$socket.on("data", (data) => {
       this.$store.commit("setListTrading", data.list)
       this.$store.commit("setStartDate", data.data)
-      //console.log(this.$store.listTrading)
+      this.startIndex = data.startIndex;
+      //console.log(this.startIndex)
     })
   },
   created() {

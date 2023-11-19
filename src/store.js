@@ -38,6 +38,9 @@ export default createStore({
         setListTrading(state, list){
             //console.log("change")
             state.listTrading = list
+        },
+        setBrokers(state,newBrokers){
+            state.brokers = newBrokers
         }
     },
     getters: { // Вычисление значения
