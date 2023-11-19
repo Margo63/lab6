@@ -26,7 +26,7 @@
       <div v-if="listTrading.includes(stock.id)">
         {{ stock.name }}
         {{ stock.data[currentIndex].Open }}
-        <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)">Buy</button>
+        <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)" v-bind:id="stock.id+'buy'">Buy</button>
         <button v-on:click="sellStock(stock.data[currentIndex].Open, stock.id)">Sell</button>
         <button v-on:click="()=>{showDialog = stock.id}">Graph</button>
 
@@ -60,7 +60,7 @@
       </div>
 
     </div>
-    <button v-on:click="goToAdmin">Admin module</button>
+    <button v-on:click="goToAdmin" id="admin">Admin module</button>
   </div>
 </template>
 <script>
@@ -185,7 +185,10 @@ export default {
   mounted() {
     this.$socket.on("trading", (data) => {
       //console.log(data);
-      this.$store.commit("change", this.stocks[0].data[data].Date)
+      if(this.stocks){
+        this.$store.commit("change", this.stocks[0].data[data].Date)
+      }
+
       this.$store.commit("changeIndex", data)
     })
     this.$socket.on("data", (data) => {
