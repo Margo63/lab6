@@ -1,13 +1,15 @@
 <template>
   <div v-if="brokers&&stocks">
-    <div v-for="item in brokers" v-bind:key = item.id>
-      {{item.name}}:{{item.balance}}
-      <div v-for="stock in item.stocks" v-bind:key = stock.id>
-        {{stock.id}}<br>
-        {{stock.amount}}<br>
-        Разница: {{ stock.sum - getPriceByStockId(stock.id, currentIndex) * stock.amount }}
+    <div v-for="item in brokers" v-bind:key = item.id class="card">
+      {{item.name}}:{{item.balance}}<br>
+      <hr/>
+      <div v-for="stock in item.stocks" v-bind:key = stock.id class="stock">
+        Name: {{stock.id}}<br>
+        Amount: {{stock.amount}}<br>
+        Разница: {{ (stock.sum - getPriceByStockId(stock.id, currentIndex) * stock.amount)*-1 }}
+        <hr/>
       </div>
-      <br><br><br>
+
     </div>
   </div>
 
@@ -72,5 +74,16 @@ export default {
 </script>
 
 <style scoped>
+  .card{
+    text-align: left;
+    background-color: #FF4B3A;
+    margin: 10px;
+    border-radius: 10px;
+    color: white;
+    padding: 15px;
+  }
+  .stock{
+    margin:10px;
 
+  }
 </style>

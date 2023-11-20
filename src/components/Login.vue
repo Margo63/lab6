@@ -50,5 +50,17 @@ export default {
 </script>
 
 <style scoped>
+    select{
+      font-size: 20px;
+    }
 
+    button{
+      font-size: 20px;
+
+      margin-top:19px;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: #FF4B3A;
+      color: white;
+    }
 </style>

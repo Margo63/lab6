@@ -4,17 +4,28 @@
     <!--    <div>query={{ $route.query }}</div>-->
     <!--    <div>path={{ $route.path }}</div>-->
     <!--    <div>id={{ $route.params.id }}</div>-->
-    <div v-if="broker">Broker:{{ broker.name }}</div>
-    <div v-if="broker">Balance:{{ balance }}</div>
-    <div>Date:{{ date }}</div>
-    <div>Start:{{ startDate }}</div>
+    <div class="adminDiv">
+      <button v-on:click="goToAdmin" id="admin" class="adminBut">Admin module</button>
+    </div>
+
+    <h3>Users info</h3>
+    <div class="userInfo">
+      <div v-if="broker">Broker:{{ broker.name }}</div>
+      <div v-if="broker">Balance:{{ balance }}</div>
+      <div>Date:{{ date }}</div>
+      <div>Start:{{ startDate }}</div>
+    </div>
+
     <h3>Users stocks</h3>
     <div v-if="broker&&stocks">
-      <div v-for="user_stock in userStocks" v-bind:key="user_stock.id">
-        Stock: {{ user_stock.id }}<br>
-        Amount: {{ user_stock.amount }}<br>
-        Sum: {{ user_stock.sum }}<br>
-        Разница: {{ user_stock.sum - getPriceByStockId(user_stock.id, currentIndex) * user_stock.amount }}<br><br><br>
+      <div  v-for="user_stock in userStocks" v-bind:key="user_stock.id" >
+        <div v-if="listTrading.includes(user_stock.id)" class="userStock" >
+          Stock: {{ user_stock.id }}<br>
+          Amount: {{ user_stock.amount }}<br>
+          Sum: {{ user_stock.sum }}<br>
+          Разница: {{ (user_stock.sum - getPriceByStockId(user_stock.id, currentIndex) * user_stock.amount)*-1 }}
+        </div>
+
       </div>
     </div>
 
@@ -23,14 +34,17 @@
 
 
     <div v-for="stock in stocks" v-bind:key="stock.id">
-      <div v-if="listTrading.includes(stock.id)">
+      <div v-if="listTrading.includes(stock.id)" class="tradeStock">
         {{ stock.name }}
         {{ stock.data[currentIndex].Open }}
-        <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)" v-bind:id="stock.id+'buy'">Buy</button>
-        <button v-on:click="sellStock(stock.data[currentIndex].Open, stock.id)">Sell</button>
-        <button v-on:click="()=>{showDialog = stock.id}">Graph</button>
+        <div>
+          <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)" v-bind:id="stock.id+'buy'" class="buttonGroup">Buy</button>
+          <button v-on:click="sellStock(stock.data[currentIndex].Open, stock.id)" class="buttonGroup">Sell</button>
+          <button v-on:click="()=>{showDialog = stock.id}" class="buttonGroup">Graph</button>
+        </div>
 
-        <dialog open v-if="showDialog === stock.id" width="1000px" height="1200px">
+
+        <dialog open v-if="showDialog === stock.id">
           <Line
               id="my-chart-id"
               :options="{
@@ -60,7 +74,7 @@
       </div>
 
     </div>
-    <button v-on:click="goToAdmin" id="admin">Admin module</button>
+
   </div>
 </template>
 <script>
@@ -235,3 +249,56 @@ export default {
 
 }
 </script>
+
+<style>
+html{
+  text-align: left;
+}
+
+  .userInfo{
+    text-align: left;
+    font-size: 16px;
+    margin-left: 20px;
+  }
+  .userStock{
+    text-align: left;
+    font-size: 16px;
+    background-color: #FF4B3A;
+    border-radius: 10px;
+    margin:20px;
+    padding:10px;
+    color:white;
+  }
+  .tradeStock{
+    text-align: left;
+    font-size: 16px;
+    background-color: #FF4B3A;
+    border-radius: 10px;
+    margin:20px;
+    padding:10px;
+    color:white;
+  }
+  .buttonGroup{
+    font-size: 16px;
+    padding-left:5px;
+    padding-right:5px;
+    border-radius: 10px;
+    background-color: white;
+    margin: 5px;
+  }
+  .adminBut{
+    background-color: #FF4B3A;
+    color: white;
+    border-radius: 10px;
+    padding:5px;
+    font-size: 16px;
+  }
+  .adminDiv{
+    position: absolute;
+    right:0;
+    top:10px;
+  }
+dialog {
+  width: 1000px;
+}
+</style>
