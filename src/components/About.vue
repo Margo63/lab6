@@ -11,7 +11,7 @@
     <h3>Users info</h3>
     <div class="userInfo">
       <div v-if="broker">Broker:{{ broker.name }}</div>
-      <div v-if="broker">Balance:{{ balance }}</div>
+      Balance:<div v-if="broker" id="balance">{{ balance }}</div>
       <div>Date:{{ date }}</div>
       <div>Start:{{ startDate }}</div>
     </div>
@@ -35,8 +35,11 @@
 
     <div v-for="stock in stocks" v-bind:key="stock.id">
       <div v-if="listTrading.includes(stock.id)" class="tradeStock">
-        {{ stock.name }}
-        {{ stock.data[currentIndex].Open }}
+        <div>
+
+          {{ stock.name }}
+          <div v-bind:id="stock.id+'text'">{{ stock.data[currentIndex].Open.slice(1) }}</div>
+        </div>
         <div>
           <button v-on:click="buyStock(stock.data[currentIndex].Open, stock.id)" v-bind:id="stock.id+'buy'" class="buttonGroup">Buy</button>
           <button v-on:click="sellStock(stock.data[currentIndex].Open, stock.id)" class="buttonGroup">Sell</button>
